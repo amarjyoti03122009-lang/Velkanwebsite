@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Velkan Threads</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Velkan Threads</h1>
+  <p>Premiumness in every thread ✨</p>
+
+  <!-- Login Form -->
+  <div id="loginBox">
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Email"><br><br>
+    <input type="password" id="password" placeholder="Password"><br><br>
+    <button id="loginBtn">Login</button>
+    <button id="logoutBtn" style="display:none;">Logout</button>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminPanel" style="display:none; margin-top:20px; border:1px solid #ccc; padding:15px;">
+    <h2>Admin Dashboard</h2>
+    <p>Welcome, Admin! You can manage products here.</p>
+    <!-- Add product management UI later -->
+  </div>
+
+  <!-- Firebase Auth -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } 
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    // ✅ Your Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyC29lav5D1h7IqeuZTYeidwNtWXqfzpddg",
+      authDomain: "velkan-website.firebaseapp.com",
+      projectId: "velkan-website",
+      storageBucket: "velkan-website.appspot.com",
+      messagingSenderId: "484020134943",
+      appId: "1:484020134943:web:dcdec83eacfa84d0be612a"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // ✅ Only this email can be admin
+    const adminEmail = "Amarjyoti.03122009@gmail.com";
+
+    // Login button
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        alert("Login successful!");
+      } catch (error) {
+        alert("Login failed: " + error.message);
+      }
+    });
+
+    // Logout button
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await signOut(auth);
+      alert("Logged out!");
+    });
+
+    // Auth state listener
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById("logoutBtn").style.display = "inline-block";
+        if (user.email === adminEmail) {
+          document.getElementById("adminPanel").style.display = "block";
+        } else {
+          document.getElementById("adminPanel").style.display = "none";
+        }
+      } else {
+        document.getElementById("logoutBtn").style.display = "none";
+        document.getElementById("adminPanel").style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
